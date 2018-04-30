@@ -1,93 +1,59 @@
 const hapi = require('hapi');
 const mongoose = require('mongoose');
-const joi = require('joi');
 const path = require('path');
-const Boom = require('boom');
-const jwt = require('jsonwebtoken');
+const _ = require('lodash');
 
-const jwt_key = "thisIsMyDummyJwtKey";
+const config = require(path.resolve('config/config'));
 
-mongoose.connect('mongodb://localhost:27017/NBApp');
+mongoose.connect(config.databaseUrl);
 
 require(path.resolve('./models/users'));
 
 const User = mongoose.model('User');
 
-const Utils = require(path.resolve('./utils/utils'));
+const init = async () => {
+    // Create a server with a host and port
+    const server = hapi.server({
+        port: 3000
+    });
 
-// Create a server with a host and port
-const server = hapi.server({
-    port: 3000
-});
+    await server.register(require('hapi-auth-jwt2'));
 
-// Add the route
-server.route([{
-        method: 'POST',
-        path: '/register',
-        config: {
-            validate: {
-                payload: {
-                    name: joi.string().min(4).required(),
-                    email: joi.string().email().required(),
-                    password: joi.string().required()
+    server.auth.strategy('jwt', 'jwt',
+        {
+            key: config.jwtKey,
+            validate: async function (decoded, request) {
+                try {
+                    const user = await User
+                        .findOne({email: decoded.email})
+                        .exec();
+                    if (!user) {
+                        return {isValid: false};
+                    }
+                    request.user = user;
+                    return {isValid: true};
+                } catch (e) {
+                    return {isValid: false};
                 }
-            }
-        },
-        handler: async function (request, h) {
-            try {
-                const newUser = new User(request.payload);
-                const result = await newUser.save();
-                return Utils.sanitizeUser(result);
-            } catch (e) {
-                return Boom.badRequest(e.message);
-            }
-        }
+            },
+            verifyOptions: {algorithms: ['HS256']}
+        });
 
-    },
-    {
-        method: 'POST',
-        path: '/login',
-        config: {
-            validate: {
-                payload: {
-                    email: joi.string().email().required(),
-                    password: joi.string().required()
-                }
-            }
-        },
-        handler: async function (req, h) {
-            const user = await User.findOne({
-                email: req.payload.email
-            }).exec();
-            if (!user) {
-                return Boom.badRequest('bad username and/or password');
-            }
-            const hashedPassword = user.hashPassword(req.payload.password);
-            if (hashedPassword !== user.password) {
-                return Boom.badRequest('bad username and/or password');
-            }
-            const sanitizedUser = Utils.sanitizeUser(user);
-            var token = jwt.sign(sanitizedUser, jwt_key);
-            sanitizedUser.token = token;
-            return sanitizedUser;
-
-        }
-
-    }
-]);
+    server.auth.default('jwt');
 
 
-// Start the server
-async function start() {
+    const authenticationRoutes = require(path.resolve('routes/LoginRegister'));
 
-    try {
-        await server.start();
-    } catch (err) {
-        console.log(err);
-        process.exit(1);
-    }
+    // Add the routes
+    server.route(authenticationRoutes);
 
-    console.log('Server running at:', server.info.uri);
+    await server.start();
+    return server;
 };
 
-start();
+
+init().then(server => {
+    console.log('Server running at:', server.info.uri);
+}).catch(error => {
+    console.log(error);
+});
