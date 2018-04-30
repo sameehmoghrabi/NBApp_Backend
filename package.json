@@ -1,0 +1,29 @@
+{
+  "name": "nbapp_backend",
+  "version": "1.0.0",
+  "description": "Backend for NBApp",
+  "main": "index.js",
+  "scripts": {
+    "debug": "nodemon index"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sameehmoghrabi/NBApp_Backend.git"
+  },
+  "author": "Sameeh",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/sameehmoghrabi/NBApp_Backend/issues"
+  },
+  "homepage": "https://github.com/sameehmoghrabi/NBApp_Backend#readme",
+  "dependencies": {
+    "boom": "^7.2.0",
+    "hapi": "^17.4.0",
+    "joi": "^13.2.0",
+    "jsonwebtoken": "^8.2.1",
+    "lodash": "^4.17.10",
+    "mongoose": "^5.0.16",
+    "node.js": "0.0.0",
+    "typescript": "^2.8.3"
+  }
+}
