@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/NBApp_Backend.iml" filepath="$PROJECT_DIR$/NBApp_Backend.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/NBApp_Backend.iml" filepath="$PROJECT_DIR$/.idea/NBApp_Backend.iml" />
     </modules>
   </component>
 </project>

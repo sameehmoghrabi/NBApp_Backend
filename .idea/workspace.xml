@@ -13,7 +13,7 @@
   <component name="FileEditorManager">
     <leaf>
       <file leaf-file-name="NBApp_Backend.iml" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/NBApp_Backend.iml">
+        <entry file="file://$PROJECT_DIR$/.idea/NBApp_Backend.iml">
           <provider selected="true" editor-type-id="text-editor" />
         </entry>
       </file>
@@ -216,7 +216,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/NBApp_Backend.iml">
+    <entry file="file://$PROJECT_DIR$/.idea/NBApp_Backend.iml">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
   </component>
